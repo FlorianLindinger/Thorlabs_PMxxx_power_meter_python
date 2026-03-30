@@ -1,3 +1,5 @@
+"""Example script for connecting to a Thorlabs PMxxx meter and logging power."""
+
 import os
 import sys
 import time
@@ -6,7 +8,8 @@ from datetime import datetime
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 from Thorlabs_PMxxx_power_meter import error_print, power_meter_handler
 
-if __name__ == "__main__":
+def main():
+    """Run a simple measurement loop and append readings to `test.csv`."""
     wavelength_nm = 1980  # None to not set
     device_idx = -1  # negative indexing allowed
     auto_range = True  # None to not set
@@ -64,3 +67,7 @@ if __name__ == "__main__":
             pm.final_shutdown()  # type:ignore
         except Exception:
             pass
+
+
+if __name__ == "__main__":
+    main()
