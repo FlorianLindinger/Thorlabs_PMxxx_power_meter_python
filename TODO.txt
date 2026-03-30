@@ -1,0 +1,20 @@
+todo: add message logic for changing device life
+maybe poll more often but save max and min mean
+confirm that negative index works at the moment
+
+save as compressed python? like 211225,power in mW in uint16
+8x uint8 . power up to 65W . 2 decimal seconds
+31 12 25 04 12 .00; 255*255
+add all to np.savez and detect old ones from not current day and comrpess them
+
+add license from https://github.com/Thorlabs/Light_Analysis_Examples/tree/main/Python/Thorlabs%20PMxxx%20Power%20Meters for their files
+
+make code more generic where it does not decivde to connectr and reconnect on its own
+
+add try excpets
+
+allow for not settings wl i guess
+
+# implement the chatgpt save windows exit
+
+# make same logic for printing and returnng as fieldmax_power_meter
