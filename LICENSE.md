@@ -1,0 +1,1 @@
+If TLPMX_64.dll is in this directory it must not be shared and belongs to Thorlabs
