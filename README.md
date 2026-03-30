@@ -24,7 +24,7 @@ The main module, `Thorlabs_PMxxx_power_meter.py`, exposes the
 
 Both files are allowed copies from Thorlabs and fall under their repective licenses (see LICENSE.md):
 - TLPMX.py is a copy from Thorlabs' repo https://github.com/Thorlabs/Light_Analysis_Examples/blob/main/Python/Thorlabs%20PMxxx%20Power%20Meters/TLPMX_dll/TLPMX.py
-- TLPMX_64.dll is a dll from Thorlabs that gets usually installed under C:\Program Files\IVI Foundation\VISA\Win64\Bin\TLPMX_64.dll when running Thorlabs installer from https://media.thorlabs.com/contentassets/012d23129bc54ff2bfdbf4c6d4a306fa/thorlabs.opticalparametermonitor.7.0.5320.947.zip?v=0325122421 (webside: https://www.thorlabs.com/software-pages/opm/)
+- TLPMX_64.dll is a dll from Thorlabs that gets usually installed at ```C:\Program Files\IVI Foundation\VISA\Win64\Bin\TLPMX_64.dll``` when running Thorlabs installer from https://media.thorlabs.com/contentassets/012d23129bc54ff2bfdbf4c6d4a306fa/thorlabs.opticalparametermonitor.7.0.5320.947.zip?v=0325122421 (webside: https://www.thorlabs.com/software-pages/opm/)
 
 ## Requirements
 
