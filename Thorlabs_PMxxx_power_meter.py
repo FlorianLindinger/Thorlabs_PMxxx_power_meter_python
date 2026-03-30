@@ -4,9 +4,7 @@ Example:
     wavelength_nm = 1980
     device_index = -1
     auto_power_range = True
-    dll_path = r".\\TLPMX_64.dll"
-
-    pm = power_meter_handler(dll_path)
+    pm = power_meter_handler(dll_path=None)
     pm.connect(device_index)
     pm.set_auto_range(auto_power_range)
     pm.set_wavelength_nm(wavelength_nm)
@@ -37,7 +35,10 @@ from TLPMX import (
     TLPMX,
 )
 
-################
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOCAL_DLL_PATH = os.path.join(MODULE_DIR, "TLPMX_64.dll")
+GLOBAL_DLL_PATH = r"C:\Program Files\IVI Foundation\VISA\Win64\Bin\TLPMX_64.dll"
+THORLABS_SOFTWARE_URL = "https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=3341&partnumber=CAL-PM1"
 
 
 def error_print(message, max_wrapper_len=20, wrapper_symbol="=", middle_symbol="-"):
@@ -54,15 +55,40 @@ def error_print(message, max_wrapper_len=20, wrapper_symbol="=", middle_symbol="
     print(wrapper_symbol * msg_len)
 
 
+def _resolve_dll_path(dll_path: str | None) -> str:
+    """Resolve an explicit DLL path or the standard local-then-global lookup."""
+    if dll_path is None:
+        candidates = [LOCAL_DLL_PATH, GLOBAL_DLL_PATH]
+    else:
+        candidates = [os.path.abspath(dll_path)]
+
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return os.path.abspath(candidate)
+
+    if dll_path is None:
+        raise FileNotFoundError(
+            "[Error]: DLL file not found. Checked local path "
+            f'"{LOCAL_DLL_PATH}" and expected global path "{GLOBAL_DLL_PATH}". '
+            f'Install the Thorlabs software from "{THORLABS_SOFTWARE_URL}" '
+            "or place TLPMX_64.dll next to this module."
+        )
+
+    resolved_path = os.path.abspath(dll_path)
+    raise FileNotFoundError(
+        f'[Error]: DLL file not found at "{resolved_path}". '
+        f'Install the Thorlabs software from "{THORLABS_SOFTWARE_URL}" or use '
+        "power_meter_handler(dll_path=None) to search the local repo copy first "
+        "and then the global install path."
+    )
+
+
 class TLPMX_with_dll_path(TLPMX):
     """Small TLPMX subclass that loads the 64-bit DLL from a chosen path."""
 
-    def __init__(self, dll_path=r".\TLPMX_64.dll"):
-        """dll_path is the path to TLPMX_64.dll. By default it checks for the dll in the current folder. If dll_path==None it uses the normal global dll install path for the Thorlabs dlls."""
-        if dll_path is None:
-            dll_path="C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\TLPMX_64.dll"
-        else:
-            dll_path = os.path.abspath(dll_path)
+    def __init__(self, dll_path: str | None = None):
+        """Load `TLPMX_64.dll` from an explicit path or local/global defaults."""
+        dll_path = _resolve_dll_path(dll_path)
         # __init__ has same attributes defined as in TLPMX.__init__():
         self.dll = cdll.LoadLibrary(dll_path)
         self.devSession = c_long()
@@ -76,23 +102,22 @@ class power_meter_handler:
 
     def __init__(
         self,
-        dll_path="C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\TLPMX_64.dll",
+        dll_path: str | None = None,
         sleep_time_after_connecting_s: float | None = 0.1,
     ):
         """Create a power meter handler.
 
         Args:
-            dll_path: Path to `TLPMX_64.dll`. If `None`, the default global
-                Thorlabs install path is used.
+            dll_path: Path to `TLPMX_64.dll`. If `None`, the code first checks
+                for a repo-local `TLPMX_64.dll` next to this module, then falls
+                back to the expected global install path.
             sleep_time_after_connecting_s: Delay after opening the device to
                 let the driver settle before the first command.
         """
         self.sleep_time_after_connecting_s = sleep_time_after_connecting_s
         self.device_index = None
         self.pm = None
-        if dll_path is None:
-            dll_path="C:\\Program Files\\IVI Foundation\\VISA\\Win64\\Bin\\TLPMX_64.dll"
-        self.dll_path = dll_path
+        self.dll_path = _resolve_dll_path(dll_path)
         # initialized C variables:
         self._C_deviceCount = c_uint32()
         self._C_resourceName = create_string_buffer(1024)

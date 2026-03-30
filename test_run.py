@@ -14,7 +14,7 @@ def main():
     device_idx = -1  # negative indexing allowed
     auto_range = True  # None to not set
     os.chdir(os.path.dirname(os.path.abspath(__file__)))  # move to folder of this file for relative import of dll_path
-    dll_path = r".\TLPMX_64.dll"  # set None for globally installed one
+    dll_path = None  # search local repo copy first, then global install path
 
     time_between_reads_s = 0.5
     log_path = "test.csv"
