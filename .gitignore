@@ -1,2 +1,9 @@
 # test saving file:
 test.csv
+
+# Keep generated files with local machine paths out of Git.
+__pycache__/
+*.pyc
+*.pyo
+*.lnk
+nuitka-crash-report.xml
